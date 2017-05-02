@@ -61,6 +61,7 @@ module Tool = struct
     let hlarp = create "hlarp" ~version:"biokepi-branch"
     let samblaster = create "samblaster" ~version:"v.0.1.22"
     let delly2 = create "delly2" ~version:"0.7.7"
+    let cmdstan = create "cmdstan" ~version:"2.14.0"
   end
 
   type t = {
