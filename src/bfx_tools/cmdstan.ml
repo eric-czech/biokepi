@@ -3,14 +3,17 @@
 open Biokepi_run_environment
 open Common
 
+(*let run_program = Machine.run_program biokepi_machine*)
+
 let compile_model ~stan_model ~(run_with : Machine.t) =
+  let open KEDSL in
   let cmdstan = Machine.get_tool run_with Machine.Tool.Default.cmdstan in
-  workflow_node (single_file ~host stan_model)
+  workflow_node (single_file ~host:Machine.(as_host run_with) stan_model)
   ~name:"Compile .stan file"
   ~edges: [
-    depends_on (Machine.Tool.ensure cmdstan);
+    depends_on Machine.Tool.(ensure cmdstan);
   ]
-  ~make:(run_program
+  ~make:(Machine.run_program run_with
            Program.(
              Machine.Tool.init cmdstan
              (* && shf "cd %s" cmdstan_dir *)
@@ -18,10 +21,7 @@ let compile_model ~stan_model ~(run_with : Machine.t) =
            )
         )
 
-let fit_model
-    ~stan_model
-    ~method (* uses the most simple cmdstan flags for now.
-            How to use Configuration module correctly? *)
+let fit_model ~stan_model ~fit_method
     ~data_file
     ~output_file
     ~(run_with : Machine.t) =
@@ -30,16 +30,16 @@ let fit_model
     (single_file output_file ~host:(Machine.as_host run_with))
     ~name:(sprintf "Fitting %s" stan_model)
     ~make:(
-      run_program
+      Machine.run_program run_with
         Program.(
           shf "%s \
               %s \
               data file=%s \
-              output file=%s" stan_model method data_file output_file
+              output file=%s" stan_model fit_method data_file output_file
         )
     )
     ~edges:[
-      depends_on (compile_model ~stan_model ~run_with);
+      depends_on (compile_model ~stan_model:stan_model ~run_with);
     ]
 
 (* sticking the simplest possible Configuration in here for now *)

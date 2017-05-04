@@ -527,6 +527,14 @@ let fastqc =
       ~init_program:add_to_dollar_path
       ~witness:(witness_file binary)
 
+let cmdstan =
+  Installable_tool.make
+    Machine.Tool.Default.cmdstan
+    ~url:"https://github.com/stan-dev/cmdstan/releases/download/v2.15.0/cmdstan-2.15.0.zip"
+    ~install_program:(make_and_copy_dir "cmdstan/*")
+    ~init_program:(fun ~path -> KEDSL.Program.(shf "cd %s" path))
+    ~witness:(witness_file "cmdstan")
+
 let default_tool_location msg (): Workflow_utilities.Download.tool_file_location =
   `Fail (sprintf "No location provided for %s" msg)
 
