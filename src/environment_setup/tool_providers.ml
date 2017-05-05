@@ -182,7 +182,7 @@ let add_to_dollar_path ~path = KEDSL.Program.shf "export PATH=%s:$PATH" path
 
 let make_and_copy_dir dir =
   fun ~path -> KEDSL.Program.(
-      sh "echo %s" path
+      shf "echo %s" path
       && sh "make"
       && sh "cd .."
       && shf "cp -r %s %s" dir path)
