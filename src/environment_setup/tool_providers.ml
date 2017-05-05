@@ -189,7 +189,7 @@ let make_and_copy_dir dir =
 let make_and_copy_contents =
   fun ~path -> KEDSL.Program.(
       (*shf "echo %s" path &&*)
-      sh "make"
+      sh "make build"
       && shf "cp -r * %s" path)
 let make_and_copy_bin bin =
   fun ~path -> KEDSL.Program.(
