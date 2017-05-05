@@ -188,7 +188,7 @@ let make_and_copy_dir dir =
       && shf "cp -r %s %s" dir path)
 let make_and_copy_contents =
   fun ~path -> KEDSL.Program.(
-      shf "echo %s" path
+      (*shf "echo %s" path*)
       && sh "make"
       && shf "cp -r * %s" path)
 let make_and_copy_bin bin =
@@ -207,7 +207,7 @@ let cmdstan =
   Installable_tool.make
     Machine.Tool.Default.cmdstan
     ~url:"https://github.com/stan-dev/cmdstan/releases/download/v2.15.0/cmdstan-2.15.0.zip"
-    ~install_program:(make_and_copy_dir "cmdstan.2.15.0")
+    ~install_program:(make_and_copy_contents)
     ~init_program:(fun ~path -> KEDSL.Program.(shf "cd %s" path))
     ~witness:(witness_file "cmdstan")
 
