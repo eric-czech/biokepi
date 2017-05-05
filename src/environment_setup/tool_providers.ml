@@ -183,6 +183,9 @@ let add_to_dollar_path ~path = KEDSL.Program.shf "export PATH=%s:$PATH" path
 let make_and_copy_dir dir =
   fun ~path -> KEDSL.Program.(
       sh "make" && shf "cp -r %s %s" dir path)
+let make_and_copy_contents =
+  fun ~path -> KEDSL.Program.(
+      sh "make" && shf "cp -r * %s" path)
 let make_and_copy_bin bin =
   fun ~path -> KEDSL.Program.(
       sh "make" && shf "cp %s %s" bin path)
@@ -199,7 +202,7 @@ let cmdstan =
   Installable_tool.make
     Machine.Tool.Default.cmdstan
     ~url:"https://github.com/stan-dev/cmdstan/releases/download/v2.15.0/cmdstan-2.15.0.zip"
-    ~install_program:(make_and_copy_dir "cmdstan_/*")
+    ~install_program:(make_and_copy_contents)
     ~init_program:(fun ~path -> KEDSL.Program.(shf "cd %s" path))
     ~witness:(witness_file "cmdstan")
 
