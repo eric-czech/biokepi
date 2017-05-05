@@ -209,7 +209,7 @@ let cmdstan =
     ~url:"https://github.com/stan-dev/cmdstan/releases/download/v2.15.0/cmdstan-2.15.0.zip"
     ~install_program:(make_and_copy_contents)
     ~init_program:(fun ~path -> KEDSL.Program.(shf "cd %s" path))
-    ~witness:(witness_file "cmdstan")
+    ~witness:(witness_file "bin/stan")
 
 let bwa =
   Installable_tool.make
