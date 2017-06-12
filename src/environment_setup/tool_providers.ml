@@ -190,8 +190,10 @@ let make_and_copy_contents =
   fun ~path -> KEDSL.Program.(
       shf "echo %s" path
       && shf "ls %s" path
+      && shf "cp -r * %s" path
+      && shf "cd %s" path
       && sh "make build"
-      && shf "cp -r * %s" path)
+      )
 let make_and_copy_bin bin =
   fun ~path -> KEDSL.Program.(
       sh "make" && shf "cp %s %s" bin path)
