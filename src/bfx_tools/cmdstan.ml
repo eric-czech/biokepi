@@ -42,6 +42,22 @@ let fit_model ~stan_model ~fit_method
       depends_on (compile_model ~stan_model:stan_model ~run_with);
     ]
 
+let stan_summary_node ~model_output_csv ~summary_csv
+  ~(run_with : Machine.t)
+  =
+  let open KEDSL in
+  workflow_node (single_file summary_csv ~host:(Machine.as_host run_with))
+    ~name:("stansummary " ^ model_output_csv ^ " to " ^ summary_csv)
+    ~edges: [
+      depends_on Machine.Tool.(ensure cmdstan);
+    ]
+    ~make:(Machine.run_program run_with
+             Program.(
+               Machine.Tool.init cmdstan
+               && shf "bin/stansummary %s --csv_file=%s" model_output_csv summary_csv
+             )
+          )
+
 (* sticking the simplest possible Configuration in here for now *)
 module Configuration = struct
 
