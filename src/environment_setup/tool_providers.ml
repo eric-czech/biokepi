@@ -486,6 +486,7 @@ let fastqc =
     "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.5.zip"
   in
   let binary = "fastqc" in
+  let unarchived_dir = "FastQC" in
   let binary_path path = path // binary in
   let init_program ~path =
     KEDSL.Program.(shf "export FASTQC_BIN=%s" (binary_path path))
@@ -493,11 +494,13 @@ let fastqc =
   Installable_tool.make Machine.Tool.Default.fastqc ~url
     ~witness:(witness_file binary)
     ~install_program:KEDSL.Program.(fun ~path ->
-        shf "cp -r * %s" path
+        shf "mv %s %s_tmp" unarchived_dir unarchived_dir (* Rename to avoid later case sensitivity [fastqc vs FastQC] *)
+        && shf "mv %s_tmp/* %s" unarchived_dir path
+        && shf "rmdir %s_tmp" unarchived_dir
         && shf "chmod +x %s" (binary_path path)
       )
     ~init_program
-    ~unarchived_directory:"FastQC"
+    ~archive_is_directory:false
 
   let samblaster =
     let binary = "samblaster" in
